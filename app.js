@@ -1,16 +1,43 @@
-let currentUserPhone = null;
-let children = [];
-let activeChildId = null;
-let child = null;
-let goals = [];
-let achievements = [];
-let tempOnboardFocus = [];
+// app.js - Contains embedded storage, categories, authorization, and application logic
 
-// Mathematical secure 5-digit code generator tied strictly to the phone number
-function generateSecureCode(phone) {
- let num = parseInt(phone, 10) || 12345678;
- let code = ((num * 3331) % 90000) + 10000;
- return code.toString();
+// --- Embedded Data & Storage ---
+const memoryStore = {};
+const storage = {
+ getItem(key){try{return localStorage.getItem(key)}catch(e){return memoryStore[key]||null}},
+ setItem(key,val){try{localStorage.setItem(key,val)}catch(e){memoryStore[key]=val}},
+ removeItem(key){try{localStorage.removeItem(key)}catch(e){delete memoryStore[key]}}
+};
+
+const categories = [
+ {name:"Хэл яриа ба харилцаа",icon:"💬"},
+ {name:"Унших ба бичиг үсэг",icon:"📚"},
+ {name:"Математик сэтгэлгээ",icon:"🔢"},
+ {name:"Шинжлэх ухаан ба туршилт",icon:"🔬"},
+ {name:"Бие бялдрын хөгжил",icon:"⚽"},
+ {name:"Нийгэм ба сэтгэл хөдлөл",icon:"❤️"},
+ {name:"Бүтээлч урлаг ба гар урлал",icon:"🎨"},
+ {name:"Амьдрах ухаан ба бие даадал",icon:"🌟"},
+ {name:"Логик ба асуудал шийдвэрлэх",icon:"🧩"},
+ {name:"Тэсвэр хатуужил ба зорилго",icon:"🛡️"},
+ {name:"Санхүүгийн суурь боловсрол",icon:"💰"},
+ {name:"Дижитал зөв боловсрол",icon:"💻"}
+];
+
+// --- Embedded Authorization ---
+const VALID_USERS = {
+  "99112233": "48291",
+  "88994455": "71356",
+  "99001122": "19483"
+};
+
+function verifyCredentials(phone, code) {
+  if (!VALID_USERS[phone]) {
+    return { success: false, message: "Энэ утасны дугаар системд бүртгэгдээгүй байна." };
+  }
+  if (VALID_USERS[phone] !== code) {
+    return { success: false, message: "Нэвтрэх код буруу байна. Зөвхөн тухайн дугаарт олгогдсон 5 оронтой кодыг оруулна уу." };
+  }
+  return { success: true };
 }
 
 function showGeneratedCodeHint() {
@@ -19,21 +46,25 @@ function showGeneratedCodeHint() {
   alert("Эхлээд 8 оронтой утасны дугаараа оруулна уу.");
   return;
  }
- alert("Энэ дугаарт харгалзах нууц код: " + generateSecureCode(phone));
+ alert(VALID_USERS[phone] ? `Энэ дугаарын нууц код: ${VALID_USERS[phone]}` : "Энэ дугаар бүртгэлгүй байна.");
 }
+
+// --- Application Logic & State ---
+let currentUserPhone = null;
+let children = [];
+let activeChildId = null;
+let child = null;
+let goals = [];
+let achievements = [];
+let tempOnboardFocus = [];
 
 function handleLogin() {
  const phone = document.getElementById('loginPhone').value.trim();
  const code = document.getElementById('loginCode').value.trim();
  
- if(phone.length !== 8) {
-  alert("Утасны дугаар 8 оронтой байх шаардлагатай.");
-  return;
- }
- 
- const expectedCode = generateSecureCode(phone);
- if(code !== expectedCode) {
-  alert("Нэвтрэх код буруу байна. Зөвхөн тухайн дугаарт тохирох 5 оронтой кодыг оруулна уу.");
+ const authResult = verifyCredentials(phone, code);
+ if (!authResult.success) {
+  alert(authResult.message);
   return;
  }
 
@@ -89,15 +120,15 @@ function completeOnboarding(){
  
  const defaultChild = {
   id: 'c_' + Date.now(),
-  name: 'Шинэ хүүхэд',
+  name: 'Таны хүүхэд',
   age: 7,
   gender: 'neutral',
   focusAreas: tempOnboardFocus
  };
  children = [defaultChild];
  activeChildId = defaultChild.id;
+ storage.setItem(`ltCreated_${currentUserPhone}`, Date.now());
  saveAllChildren();
- 
  initAppAfterAuth();
 }
 
@@ -166,7 +197,6 @@ function loadChildData(){
 }
 
 function openAddChildFlow(){
- // Allow adding children freely within 12 months; check expiration only after 12 months
  const accountCreationTime = parseInt(storage.getItem(`ltCreated_${currentUserPhone}`) || Date.now(), 10);
  storage.setItem(`ltCreated_${currentUserPhone}`, accountCreationTime);
  
@@ -331,7 +361,7 @@ function saveProfileChanges(){
 function render(){
  if(!child) return;
  updateChildSelector();
- document.getElementById("welcome").textContent = `${child.name}-ийн Бяцхан Мод`;
+ document.getElementById("welcome").textContent = `${child.name}-ийн Хөгжлийн Хянагч`;
  document.getElementById("ageBadge").textContent = `${child.age} НАСТАЙ`;
  renderGoals(); renderAchievements(); renderCategories(); renderRecommendations(); renderDashboard(); renderGrowth(); renderProfileForm();
 }
