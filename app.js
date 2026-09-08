@@ -316,10 +316,39 @@ function renderCategories(){
   </div>`).join("");
 }
 
-function renderRecommendations(){
- document.getElementById("recommendations").innerHTML = `
-  <div class="recommend"><b>💬 Хэл яриаг хөгжүүлэх:</b> Өдөр бүр хамтдаа ном уншиж, ярилцах.</div>
-  <div class="recommend"><b>🔢 Логик сэтгэлгээ:</b> Энгийн тоглоом болон тоо тоолох дасгалууд хийх.</div>`;
+function renderRecommendations() {
+  const container = document.getElementById('recommendations');
+  if (!container) return;
+  
+  if (!child) {
+    container.innerHTML = "<p class='muted'>Хүүхдийн профайл сонгогдоогүй байна.</p>";
+    return;
+  }
+
+  let recs = [];
+  if (child.age <= 5) {
+    recs = [
+      {icon: "💬", title: "Хэл яриаг хөгжүүлэх", text: "Өдөр бүр үлгэр ярьж өгч, шинэ үгсийн утгыг тайлбарлан ярилцах."},
+      {icon: "🧩", title: "Мэдрэхүй ба хөдөлгөөн", text: "Ялгаатай хэлбэр дүрс, өнгийг таних энгийн тоглоом тоглох."}
+    ];
+  } else if (child.age <= 10) {
+    recs = [
+      {icon: "📚", title: "Бие даан унших чадвар", text: "Өдөрт 15-20 минут дуртай номоо өөрөө уншиж, агуулгыг ярилцах."},
+      {icon: "🔢", title: "Логик сэтгэлгээ", text: "Энгийн тооцоолол болон оньсого таавар хамтдаа бодох."}
+    ];
+  } else {
+    recs = [
+      {icon: "🛡️", title: "Тэсвэр хатуужил", text: "Өөртөө зорилго тавьж, түүнийгээ тууштай хэрэгжүүлэхэд дэмжлэг үзүүлэх."},
+      {icon: "💻", title: "Дижитал зөв боловсрол", text: "Цахим орчныг зөв зохистой ашиглах, цагийн менежмент хийх."}
+    ];
+  }
+
+  container.innerHTML = recs.map(r => `
+    <div class="recommend" style="display:flex; gap:12px; align-items:center; margin-bottom:10px; padding:10px; background:rgba(0,0,0,0.02); border-radius:8px;">
+      <span style="font-size:24px;">${r.icon}</span>
+      <div><b>${r.title}:</b> <span class="muted">${r.text}</span></div>
+    </div>
+  `).join("");
 }
 
 function renderDashboard(){
