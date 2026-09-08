@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Бяцхан Мод | Хүүхдийн Хөгжлийн Хянагч</title>
+<style>
+:root{
+ --primary:#5b8fd1;--primaryDark:#416fa9;--soft:#edf6ff;--accent:#6db37a;
+ --bg:#f7fafc;--card:#fff;--text:#243247;--muted:#718096;--gold:#f3c84b;
+ --shadow:0 10px 30px rgba(45,65,90,.10);--radius:22px
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Nunito,"Trebuchet MS",Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
+.app{max-width:1200px;margin:auto;min-height:100vh;padding-bottom:40px}
+.splash{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(145deg,#e9f5ff,#fff,#eef9ef)}
+.splashTree{font-size:100px;animation:grow 1.2s ease}
+.splash h1{font-size:56px;margin:8px 0;font-weight:900;letter-spacing:-2px}.splash p{font-size:19px;color:var(--muted)}
+@keyframes grow{from{transform:scale(.35);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes sparkle{0%{transform:scale(.7) rotate(0);opacity:0}30%{opacity:1}100%{transform:scale(1.35) rotate(20deg);opacity:0}}
+.hidden{display:none!important}
+.screen{padding:22px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.brand{font-size:26px;font-weight:900}.brand span{color:var(--accent)}
+.childSwitcher{display:flex;align-items:center;gap:10px;background:#fff;padding:6px 12px;border-radius:999px;box-shadow:var(--shadow)}
+.childSwitcher select{border:none;background:transparent;font-weight:800;color:var(--text);cursor:pointer;outline:none}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.nav button{background:#fff;color:var(--text);padding:11px 15px;border-radius:14px;box-shadow:0 3px 12px rgba(45,65,90,.05)}.nav button.active{background:var(--primary);color:#fff}
+.card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:center;background:linear-gradient(135deg,var(--soft),#f4fff5)}
+.hero h1{font-size:34px;margin:12px 0 5px}.muted{color:var(--muted)}
+.primary{background:var(--primary);color:#fff;padding:13px 19px;border-radius:14px;font-weight:900}.secondary{background:#eef3f7;color:var(--text);padding:11px 16px;border-radius:13px;font-weight:800}
+.treePanel{text-align:center}.treeVisual{font-size:115px;line-height:1}.leaves{font-size:28px;min-height:36px;word-break:break-all}.growthText{font-weight:900;color:var(--accent)}
+.weekBanner{margin-bottom:18px;background:#fff;padding:16px 20px;border-radius:18px;box-shadow:var(--shadow)}
+.weekTop{display:flex;justify-content:space-between;align-items:center;gap:15px}.percent{font-size:30px;font-weight:900}
+.progress{height:14px;background:#e9eef2;border-radius:20px;overflow:hidden;margin:10px 0}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#91ce83);border-radius:20px;transition:width .45s ease}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.category{display:flex;gap:13px;align-items:center}.catIcon{font-size:34px}.catTitle{font-weight:900}.small{font-size:13px}
+.formGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+label{display:block;font-weight:800;margin:10px 0 6px}input,select,textarea{width:100%;padding:13px;border:1px solid #d9e3eb;border-radius:13px;background:#fff;color:var(--text)}
+.goalRow,.achievementRow{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px 0;border-bottom:1px solid #edf0f3}.goalRow:last-child,.achievementRow:last-child{border-bottom:0}
+.check{width:25px;height:25px;accent-color:var(--accent)}
+.stars button{background:none;padding:0 2px;font-size:27px;color:#d2d8df}.stars button.on{color:var(--gold)}
+.badge{display:inline-block;padding:5px 10px;border-radius:999px;background:#eef8ef;color:#4f8b58;font-size:12px;font-weight:900}
+.recommend{background:#f7fbff;border:1px solid #e3eef8;padding:14px;border-radius:16px;margin:9px 0}
+.completion{position:relative;text-align:center;padding:20px;background:linear-gradient(135deg,#fffdf0,#f3fff4);border-radius:18px;overflow:hidden}
+.completion .spark{position:absolute;font-size:28px;animation:sparkle 1.4s infinite}.s1{left:15%;top:15%}.s2{right:18%;top:20%;animation-delay:.3s}.s3{left:30%;bottom:10%;animation-delay:.6s}.s4{right:30%;bottom:15%;animation-delay:.9s}
+.toast{position:fixed;right:20px;bottom:20px;background:#243247;color:#fff;padding:14px 18px;border-radius:14px;box-shadow:var(--shadow);opacity:0;transform:translateY(15px);transition:.3s;z-index:10}.toast.show{opacity:1;transform:translateY(0)}
+.gender-box { transition: box-shadow 0.3s ease, border-color 0.3s ease; border: 2px solid #d9e3eb; padding: 10px; border-radius: 13px; }
+.gender-box.boy-glow { border-color: #5b8fd1; box-shadow: 0 0 15px rgba(91,143,209,0.5); background: #f0f6ff; }
+.gender-box.girl-glow { border-color: #c77d9b; box-shadow: 0 0 15px rgba(199,125,155,0.5); background: #fff4f8; }
+.genderChoices{display:flex;gap:10px;flex-wrap:wrap}
+.genderBtn{flex:1;min-width:90px;padding:14px 10px;border-radius:14px;border:2px solid #d9e3eb;background:#fff;font-weight:800;color:var(--text);transition:.2s}
+.genderBtn.sel-boy{border-color:#5b8fd1;background:#f0f6ff;color:#416fa9;box-shadow:0 0 12px rgba(91,143,209,.35)}
+.genderBtn.sel-girl{border-color:#c77d9b;background:#fff4f8;color:#a5527a;box-shadow:0 0 12px rgba(199,125,155,.35)}
+.genderBtn.sel-neutral{border-color:#657f91;background:#f2f5f7;color:#3d4d59;box-shadow:0 0 12px rgba(101,127,145,.30)}
+.emptySwitcher{font-weight:800;color:var(--muted);font-size:14px;padding:0 4px}
+.modalOverlay{position:fixed;inset:0;background:rgba(36,50,71,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:18px}
+.modalOverlay.hidden{display:none!important}
+.modalBox{background:#fff;border-radius:22px;max-width:480px;width:100%;padding:26px;box-shadow:var(--shadow);max-height:88vh;overflow:auto;position:relative}
+.modalBox h2{margin-top:0}
+.modalClose{position:absolute;top:14px;right:16px;background:none;font-size:20px;color:var(--muted);padding:2px 6px;border-radius:8px}
+.modalClose:hover{background:#f1f4f7}
+.focusWrap{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.focusPill{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:#f2f6fb;border:2px solid #e3eef8;font-weight:800;color:var(--text);transition:.2s}
+.focusPill:hover{border-color:var(--primary)}
+.focusPill .plus{font-weight:900;color:var(--accent)}
+.focusPill.chosen{background:#eafaee;border-color:var(--accent);color:#39683f}
+.focusCounter{font-weight:900;color:var(--accent)}
+.paywallIcon{font-size:44px;text-align:center}
+@media(max-width:700px){.hero{grid-template-columns:1fr}.splash h1{font-size:42px}.treeVisual{font-size:85px}.screen{padding:14px}.weekTop{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div id="splash" class="splash">
+ <div>
+  <div class="splashTree">🌳</div>
+  <h1>Бяцхан Мод</h1>
+  <p>Хүүхдийнхээ өсөлт хөгжилтөд алхам алхмаар тусацгаая.</p>
+  <button class="primary" onclick="initApp()">Эхлэх</button>
+ </div>
+</div>
+
+<div id="app" class="app hidden">
+ <div class="screen">
+  <div class="topbar">
+   <div class="brand">🌱 Бяцхан <span>Мод</span></div>
+   <div style="display:flex;gap:10px;align-items:center;">
+    <div class="childSwitcher" id="childSwitcherBox">
+     <span>👶</span>
+     <select id="childSelect" onchange="switchChild(this.value)"></select>
+     <span id="noChildLabel" class="emptySwitcher hidden">Хүүхэд бүртгэгдээгүй байна</span>
+    </div>
+    <button class="secondary" style="padding:8px 12px;" onclick="openAddChildFlow()">+ Хүүхэд нэмэх</button>
+   </div>
+  </div>
+  <div class="nav">
+   <button class="active" onclick="show('home',this)">Нүүр</button>
+   <button onclick="show('goals',this)">Зрилтууд</button>
+   <button onclick="show('achievements',this)">Амжилтууд</button>
+   <button onclick="show('dashboard',this)">Хяналтын самбар</button>
+   <button onclick="show('fundamentals',this)">Үндсэн суурь</button>
+   <button onclick="editChild()">Хүүхдийн профайл</button>
+  </div>
+
+  <section id="home">
+   <div class="weekBanner">
+    <div class="weekTop"><div><span class="badge">ЭНЭ ДОЛОО ХОНОГТ</span><h2 style="margin:7px 0 0">🌟 Гэр бүлийн өсөлтийн хэмжүүр</h2><span class="muted">Утга учиртай зорилго болон амжилтуудыг хамтдаа бүтээгээрэй.</span></div><div class="percent" id="homePercent">0%</div></div>
+    <div class="progress"><i id="homeBar" style="width:0%"></i></div>
+    <div id="completionMessage" class="hidden"></div>
+   </div>
+
+   <div class="card hero">
+    <div>
+     <span class="badge" id="ageBadge"></span>
+     <h1 id="welcome"></h1>
+     <p class="muted">Бяцхан Мод нь хүүхэд өсч томрох тусам санал болгох үйл ажиллагаануудаа автоматаар тохируулдаг. Эцэг эхчүүд эдгээр зөвлөмжийг дагах эсвэл өөрчлөн тохируулах боломжтой.</p>
+     <button class="primary" onclick="show('goals')">Зрилго тодорхойлох</button>
+     <button class="secondary" onclick="show('achievements')">+ Амжилт бүртгэх</button>
+    </div>
+    <div class="treePanel"><div class="treeVisual" id="treeVisual">🌱</div><div class="leaves" id="leaves"></div><div class="growthText" id="growthText">Таны мод ургахад бэлэн байна.</div></div>
+   </div>
+
+   <div class="card">
+    <h2>Энэ насныханд санал болгох</h2>
+    <p class="muted">Эдгээр нь шалгалт эсвэл оношилгоо бус, харин өдөр тутмын хөгжлийн санаанууд юм.</p>
+    <div id="recommendations"></div>
+   </div>
+
+   <h2>Хөгжлийн чиглэлүүд</h2>
+   <div class="grid" id="categories"></div>
+  </section>
+
+  <section id="goals" class="hidden">
+   <div class="card">
+    <h1>🎯 Хөгжлийн зорилтууд</h1>
+    <p class="muted">Бодитой хэдэн зорилгоор эхэл. Хүүхдийн нас өөрчлөгдөхөд санал болгох зүйлс автоматаар өөрчлөгдөнө.</p>
+    <div class="formGrid">
+     <div><label>Зорилго</label><input id="goalText" placeholder="20 минут бие даан ном унших"></div>
+     <div><label>Хөгжлийн чиглэл</label><select id="goalCat"></select></div>
+     <div><label>Давтамж</label><select id="goalFreq"><option>Өдөр бүр</option><option>Долоо хоног бүр</option></select></div>
+    </div><br><button class="primary" onclick="addGoal()">+ Зорилго нэмэх</button>
+   </div>
+   <div class="card"><h2>Өнөөдрийн / Энэ долоо хоногийн зорилтууд</h2><div id="goalList"></div></div>
+  </section>
+
+  <section id="achievements" class="hidden">
+   <div class="card">
+    <h1>🏆 Амжилтаа тэмдэглэх</h1>
+    <div class="formGrid">
+     <div><label>Юу болсон бэ?</label><input id="achievementText" placeholder="Гэрийн даалгавраа цаг тухайд нь хийж дуусгасан"></div>
+     <div><label>Хөгжлийн чиглэл</label><select id="achievementCat"></select></div>
+     <div><label>Ямар түвшний амжилт вэ?</label><select id="achievementScore"><option value="1">1 - Жижиг алхам</option><option value="2">2 - Сайн хичээл зүтгэл</option><option value="3">3 - Томоохон амжилт</option><option value="4">4 - Гайхалтай амжилт</option><option value="5">5 - Онцгой амжилт</option></select></div>
+    </div><br><button class="primary" onclick="addAchievement()">Амжилтыг хадгалах</button>
+   </div>
+   <div class="card"><h2>Амжилтын түүх</h2><div id="achievementList"></div></div>
+  </section>
+
+  <section id="dashboard" class="hidden">
+   <div class="card">
+    <h1>📊 Амжилтын хяналтын самбар</h1>
+    <div id="dashboardContent"></div>
+   </div>
+  </section>
+
+  <section id="fundamentals" class="hidden">
+   <div class="card">
+    <h1>🌿 Үндсэн суурь</h1>
+    <p class="muted">Юуг дадлагажуулахаа шийдэхийн тулд насанд тохирсон сануулгуудыг ашиглаарай. Хүүхэд харилцан адилгүй хурдаар хөгждөг тул уг аппликейшнийг хэзээ ч оношилгооны хэрэгсэл болгон ашиглаж болохгүй.</p>
+    <div id="fundamentalContent"></div>
+   </div>
+  </section>
+
+  <section id="profile" class="hidden">
+   <div class="card">
+    <h1>👧 Хүүхдийн профайл</h1>
+    <div class="formGrid">
+     <div><label>Нэр</label><input id="profileName"></div>
+     <div><label>Нас</label><input id="profileAge" type="number" min="2" max="18"></div>
+     <div><label>Хүйс / Загвар</label>
+      <div id="genderContainer" class="gender-box">
+       <div class="genderChoices">
+        <button type="button" class="genderBtn" id="profileGenderBoy" onclick="setProfileGender('boy')">Хүү</button>
+        <button type="button" class="genderBtn" id="profileGenderGirl" onclick="setProfileGender('girl')">Охин</button>
+        <button type="button" class="genderBtn" id="profileGenderNeutral" onclick="setProfileGender('neutral')">Ерөнхий</button>
+       </div>
+       <input type="hidden" id="profileGender" value="neutral">
+      </div>
+     </div>
+    </div><br><button class="primary" onclick="saveProfile()">Профайлыг хадгалах</button>
+    <button class="secondary" onclick="openFocusAreaModal(false)">Анхаарал хандуулах чиглэлүүдийг засах</button>
+   </div>
+  </section>
+ </div>
+</div>
+<div id="modalOverlay" class="modalOverlay hidden">
+ <div class="modalBox" id="modalBox"></div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+let categories = [];
+let ageData = {};
+let goalBank = {};
+let focusAreas = [];
+let MAX_FREE_CHILDREN = 3;
+let MAX_FOCUS_AREAS = 4;
+
+const memoryStore={};
+const storage={
+ getItem(key){try{return localStorage.getItem(key)}catch(e){return memoryStore[key]||null}},
+ setItem(key,val){try{localStorage.setItem(key,val)}catch(e){memoryStore[key]=val}},
+ removeItem(key){try{localStorage.removeItem(key)}catch(e){delete memoryStore[key]}}
+};
+
+async function initApp() {
+  try {
+    const res = await fetch('/api/data');
+    const serverData = await res.json();
+    categories = serverData.categories;
+    ageData = serverData.ageData;
+    goalBank = serverData.goalBank;
+    focusAreas = serverData.focusAreas;
+  } catch(e) {
+    console.error("Failed to load secure server data", e);
+  }
+
+  document.getElementById("splash").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  loadAppState();
+  updateChildSelector();
+  if(children.length === 0){
+   document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+   openAddChildFlow();
+  } else render();
+}
+
+let children, activeChildId, child, goals, achievements, cycle;
+
+function loadAppState() {
+  try{
+   children = JSON.parse(storage.getItem("ltChildren") || "null");
+   activeChildId = storage.getItem("ltActiveChildId") || null;
+
+   if(!children) {
+     let oldChild = JSON.parse(storage.getItem("ltChild") || "null");
+     if(oldChild) {
+       children = [{id: 'c_' + Date.now(), name: oldChild.name, age: oldChild.age, gender: oldChild.gender, focusAreas: []}];
+       activeChildId = children[0].id;
+     } else {
+       children = [];
+       activeChildId = null;
+     }
+     saveAllChildren();
+   }
+
+   child = children.find(c => c.id === activeChildId) || children[0] || null;
+   goals = child ? JSON.parse(storage.getItem(`ltGoals_${child.id}`) || "[]") : [];
+   achievements = child ? JSON.parse(storage.getItem(`ltAchievements_${child.id}`) || "[]") : [];
+   cycle = child ? (storage.getItem(`ltCycle_${child.id}`) || getWeekKey()) : getWeekKey();
+  }catch(e){
+   children = [];
+   activeChildId = null; child = null; goals = []; achievements = []; cycle = getWeekKey();
+  }
+}
+
+function getWeekKey(){const d=new Date();const onejan=new Date(d.getFullYear(),0,1);return d.getFullYear()+"-"+Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7)}
+
+function updateChildSelector(){
+ const sel = document.getElementById("childSelect");
+ const noLabel = document.getElementById("noChildLabel");
+ if(!children.length){
+  sel.innerHTML = "";
+  sel.classList.add("hidden");
+  noLabel.classList.remove("hidden");
+  return;
+ }
+ sel.classList.remove("hidden");
+ noLabel.classList.add("hidden");
+ sel.innerHTML = children.map(c => `<option value="${c.id}" ${child && c.id === child.id ? 'selected' : ''}>${c.name} (${c.age} настай)</option>`).join("");
+}
+
+function switchChild(id){
+ const found = children.find(c => c.id === id);
+ if(found){
+  child = found;
+  activeChildId = child.id;
+  storage.setItem("ltActiveChildId", activeChildId);
+  loadChildData();
+  render();
+  toast(`${child.name} руу шилжлээ`);
+ }
+}
+
+function loadChildData(){
+ try{
+  goals = JSON.parse(storage.getItem(`ltGoals_${child.id}`) || "[]");
+  achievements = JSON.parse(storage.getItem(`ltAchievements_${child.id}`) || "[]");
+ }catch(e){goals=[];achievements=[]}
+ cycle = storage.getItem(`ltCycle_${child.id}`) || getWeekKey();
+}
+
+let pendingChildGender = 'neutral';
+let pendingFocusSelection = [];
+
+function openModal(){document.getElementById('modalOverlay').classList.remove('hidden')}
+function closeModal(){document.getElementById('modalOverlay').classList.add('hidden');document.getElementById('modalBox').innerHTML=''}
+
+function openAddChildFlow(){
+ if(children.length >= MAX_FREE_CHILDREN){renderPaywallModal();return}
+ renderAddChildModal();
+}
+
+function renderPaywallModal(){
+ document.getElementById('modalBox').innerHTML = `
+  <button class="modalClose" onclick="closeModal()">✕</button>
+  <div class="paywallIcon">🔒</div>
+  <h2 style="text-align:center">Та үнэгүй хувилбарын хязгаартаа хүрсэн байна</h2>
+  <p class="muted" style="text-align:center">Үнэгүй багц нь хамгийн ихдээ ${MAX_FREE_CHILDREN} хүүхдийн профайл дэмждэг. Илүү олон хүүхэд нэмэх болон нэмэлт боломжуудыг нээхийн тулд төлбөртэй багцаар биднийг дэмжээрэй.</p>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+   <button class="secondary" onclick="closeModal()">Магадгүй дараа</button>
+   <button class="primary" onclick="toast('Сонирхсонд баярлалаа! Төлбөртэй багцууд тун удахгүй.');closeModal()">Төлбөрийн багц үзэх</button>
+  </div>`;
+ openModal();
+}
+
+function renderAddChildModal(){
+ pendingChildGender = 'neutral';
+ document.getElementById('modalBox').innerHTML = `
+  <button class="modalClose" onclick="closeModal()">✕</button>
+  <h2>Хүүхэд нэмэх</h2>
+  <label>Нэр</label><input id="nc_name" placeholder="Хүүхдийн нэр">
+  <label>Нас</label><input id="nc_age" type="number" min="5" max="16" value="8">
+  <label>Хүйс / Загвар</label>
+  <div class="genderChoices">
+   <button type="button" class="genderBtn" id="nc_genderBoy" onclick="selectNewChildGender('boy')">Хүү</button>
+   <button type="button" class="genderBtn" id="nc_genderGirl" onclick="selectNewChildGender('girl')">Охин</button>
+   <button type="button" class="genderBtn sel-neutral" id="nc_genderNeutral" onclick="selectNewChildGender('neutral')">Ерөнхий</button>
+  </div>
+  <br><button class="primary" onclick="submitNewChild()">Үргэлжлүүлэх</button>`;
+ openModal();
+}
+
+function selectNewChildGender(val){
+ pendingChildGender = val;
+ ['Boy','Girl','Neutral'].forEach(g=>{
+  const btn=document.getElementById('nc_gender'+g);
+  if(btn) btn.className = 'genderBtn' + (g.toLowerCase()===val ? ' sel-'+val : '');
+ });
+}
+
+function submitNewChild(){
+ const name = document.getElementById('nc_name').value.trim();
+ if(!name){alert("Хүүхдийн нэрийг оруулна уу.");return}
+ let age = +document.getElementById('nc_age').value || 8;
+ age = Math.max(5,Math.min(16,age));
+ const newChild = {id:'c_'+Date.now(), name, age, gender:pendingChildGender, focusAreas:[]};
+ children.push(newChild);
+ saveAllChildren();
+ switchChild(newChild.id);
+ renderAllSetModal(name);
+}
+
+function renderAllSetModal(name){
+ document.getElementById('modalBox').innerHTML = `
+  <h2>🎉 Бүх зүйл бэлэн боллоо!</h2>
+  <p class="muted">${name}-ийн профайл үүслээ. Одоо хамгийн ихдээ ${MAX_FOCUS_AREAS} анхаарал хандуулах чиглэлийг сонгоорой — бид санал болгох үйл ажиллагааг тэдгээрт чиглүүлэх болно.</p>
+  <button class="primary" onclick="openFocusAreaModal(true)">Чиглэлүүд сонгох</button>
+  <button class="secondary" onclick="closeModal()">Одоохондоо алгасах</button>`;
+ openModal();
+}
+
+function openFocusAreaModal(isNew){
+ pendingFocusSelection = isNew ? [] : [...(child.focusAreas||[])];
+ renderFocusAreaModal();
+}
+
+function renderFocusAreaModal(){
+ const remaining = focusAreas.filter(f=>!pendingFocusSelection.includes(f.name));
+ const chips = pendingFocusSelection.map(n=>`<span class="focusPill chosen">✓ ${n}</span>`).join("");
+ document.getElementById('modalBox').innerHTML = `
+  <button class="modalClose" onclick="closeModal()">✕</button>
+  <h2>Анхаарал хандуулах чиглэлүүд</h2>
+  <p class="muted">${child.name}-д зориулж ${MAX_FOCUS_AREAS} чиглэл сонгоно уу. <span class="focusCounter">${pendingFocusSelection.length}/${MAX_FOCUS_AREAS} сонгогдсон</span></p>
+  ${chips ? `<div class="focusWrap">${chips}</div>` : ""}
+  <div class="focusWrap">${remaining.map(f=>`<button type="button" class="focusPill" onclick="chooseFocusArea('${f.name}')"><span class="plus">+</span> ${f.name}</button>`).join("")}</div>
+  <button class="secondary" onclick="finishFocusAreas()">${pendingFocusSelection.length ? "Хадгалаад дуусгах" : "Одоохондоо алгасах"}</button>`;
+ openModal();
+}
+
+function chooseFocusArea(name){
+ if(pendingFocusSelection.length >= MAX_FOCUS_AREAS) return;
+ document.getElementById('modalBox').innerHTML = `
+  <h2>Та ${name}-г сонирхож байна уу?</h2>
+  <p class="muted">Бид ${child.name}-ийн санал болгох үйл ажиллагааг ${name.toLowerCase()} хөгжүүлэхэд чиглэсэн дасгалууд руу түлхүү чиглүүлэх болно.</p>
+  <div style="display:flex;gap:10px">
+   <button class="primary" onclick="confirmFocusArea('${name}',true)">Тийм, оруулах</button>
+   <button class="secondary" onclick="confirmFocusArea('${name}',false)">Үгүй, буцах</button>
+  </div>`;
+}
+
+function confirmFocusArea(name, yes){
+ if(yes && !pendingFocusSelection.includes(name) && pendingFocusSelection.length < MAX_FOCUS_AREAS){
+  pendingFocusSelection.push(name);
+ }
+ if(pendingFocusSelection.length >= MAX_FOCUS_AREAS) finishFocusAreas();
+ else renderFocusAreaModal();
+}
+
+function finishFocusAreas(){
+ if(child){
+  child.focusAreas = pendingFocusSelection.slice(0,MAX_FOCUS_AREAS);
+  saveAllChildren();
+  render();
+  toast(child.focusAreas.length ? `${child.name}-ийн анхаарал хандуулах чиглэлүүд хадгалагдлаа.` : "Та хүүхдийн профайлаас хэдийд ч чиглэлээ өөрчлөх боломжтой.");
+ }
+ closeModal();
+}
+
+function editChild(){
+ !child?(toast("Эхлээд хүүхэд нэмнэ үү."),openAddChildFlow(),void 0):(show('profile'),document.getElementById('profileName').value=child.name,document.getElementById('profileAge').value=child.age,setProfileGender(child.gender));
+}
+
+function setProfileGender(val){
+ document.getElementById('profileGender').value = val;
+ ['boy','girl','neutral'].forEach(g=>{
+  const btn=document.getElementById('profileGender'+g.charAt(0).toUpperCase()+g.slice(1));
+  if(btn) btn.className = 'genderBtn' + (g===val ? ' sel-'+val : '');
+ });
+ handleGenderChange();
+}
+
+function handleGenderChange(){
+ const val = document.getElementById('profileGender').value;
+ const box = document.getElementById('genderContainer');
+ box.className = "gender-box";
+ if(val === 'boy') box.classList.add('boy-glow');
+ else if(val === 'girl') box.classList.add('girl-glow');
+}
+
+function saveProfile(){
+ const name=document.getElementById('profileName').value.trim();
+ const age=+document.getElementById('profileAge').value;
+ const gender=document.getElementById('profileGender').value;
+ if(!name||!age){alert("Хүүхдийн нэр болон насыг оруулна уу.");return}
+ 
+ child.name = name;
+ child.age = age;
+ child.gender = gender;
+ saveAllChildren();
+ updateChildSelector();
+ render();
+ show('home',document.querySelector('.nav button'));
+ toast("Профайл шинэчлэгдлээ.");
+}
+
+function applyTheme(){
+ const c=child.gender==="girl"?"#c77d9b":child.gender==="boy"?"#5b8fd1":"#657f91";
+ document.documentElement.style.setProperty("--primary",c);
+ document.documentElement.style.setProperty("--primaryDark",c);
+}
+
+function render(){
+ if(!child) return;
+ updateChildSelector();
+ applyTheme();
+ const data=getAgeData(child.age);
+ document.getElementById("welcome").textContent=`${child.name}-ийн Бяцхан Мод`;
+ document.getElementById("ageBadge").textContent=`${child.age} НАСТАЙ • ${data.focus.toUpperCase()}`;
+ document.getElementById("profileName").value=child.name;
+ document.getElementById("profileAge").value=child.age;
+ setProfileGender(child.gender);
+ fillSelects();renderCategories();renderGoals();renderAchievements();renderDashboard();renderFundamentals();renderRecommendations();renderGrowth();
+}
+
+function fillSelects(){
+ ["goalCat","achievementCat"].forEach(id=>document.getElementById(id).innerHTML=categories.map((c,i)=>`<option value="${i}">${c.icon} ${c.name}</option>`).join(""));
+}
+function categoryIndex(name){return categories.findIndex(c=>c.name===name)}
+
+function getFocusCats(){
+ const favCats=new Set();
+ if(child&&child.focusAreas)child.focusAreas.forEach(name=>{
+  const fa=focusAreas.find(f=>f.name===name);
+  if(fa)fa.cats.forEach(c=>favCats.add(c));
+ });
+ return favCats;
+}
+
+function pickBankGoal(catIndex,age,excludeTexts){
+ const pool=(goalBank[catIndex]||[]).filter(x=>age>=x.min&&age<=x.max&&!excludeTexts.has(x.t));
+ if(!pool.length)return null;
+ return pool[Math.floor(Math.random()*pool.length)].t;
+}
+
+function autoRefillGoal(catIndex){
+ if(!child)return;
+ if(!getFocusCats().has(catIndex))return;
+ const existingTexts=new Set(goals.map(g=>g.text).concat(achievements.map(a=>a.text)));
+ const nextText=pickBankGoal(catIndex,child.age,existingTexts);
+ if(!nextText)return;
+ goals.unshift({id:Date.now(),text:nextText,cat:catIndex,freq:"Долоо хоног бүр",done:false,cycle:getWeekKey()});
+ saveChildData();
+ toast(`Энэхүү анхаарал хандуулах чиглэлийг хөгжүүлэхийн тулд шинэ зорилго нэмэгдлээ!`);
+}
+
+function getAgeData(ageVal){
+ let age=Math.max(5,Math.min(16,+ageVal||10));
+ return ageData[age]||ageData[10];
+}
+
+function renderRecommendations(){
+ const data=getAgeData(child.age);
+ const favCats=getFocusCats();
+ let items=data.goals.map((g,i)=>({g,i,cat:categoryIndex(g[1])}));
+ if(favCats.size)items=items.slice().sort((a,b)=>(favCats.has(b.cat)?1:0)-(favCats.has(a.cat)?1:0));
+ document.getElementById("recommendations").innerHTML=items.map(({g,i,cat},pos)=>`<div class="recommend">${favCats.has(cat)?'<span class="badge" style="margin-right:8px">ЧИГЛЭЛ</span>':''}<b>${pos+1}. ${g[0]}</b><br><span class="small muted">${categories[cat].icon} ${g[1]}</span> <button class="secondary" style="float:right;padding:6px 10px" onclick="useSuggested(${i})">Зорилго болгох</button><div style="clear:both"></div></div>`).join("");
+}
+
+function useSuggested(i){
+ const g=getAgeData(child.age).goals[i];
+ goals.unshift({id:Date.now(),text:g[0],cat:categoryIndex(g[1]),freq:"Долоо хоног бүр",done:false,cycle:getWeekKey()});
+ saveChildData();renderGoals();renderGrowth();toast("Санал болгосон зорилго нэмэгдлээ.");
+}
+
+function addGoal(){
+ const text=document.getElementById("goalText").value.trim();if(!text)return;
+ goals.unshift({id:Date.now(),text,cat:+document.getElementById("goalCat").value,freq:document.getElementById("goalFreq").value,done:false,cycle:getWeekKey()});
+ saveChildData();document.getElementById("goalText").value="";renderGoals();renderGrowth();toast("Зорилго нэмэгдлээ.");
+}
+
+function toggleGoal(id){
+ const g=goals.find(x=>x.id===id);if(!g)return;g.done=!g.done;saveChildData();
+ if(g.done){chime("goal");autoRefillGoal(g.cat)}
+ renderGoals();renderCategories();renderGrowth();renderDashboard();
+}
+
+function renderGoals(){
+ document.getElementById("goalList").innerHTML=goals.length?goals.map(g=>`<div class="goalRow">
+ <div style="display:flex;gap:12px;align-items:center"><input class="check" type="checkbox" ${g.done?"checked":""} onchange="toggleGoal(${g.id})"><div><b>${g.text}</b><br><span class="small muted">${categories[g.cat].icon} ${categories[g.cat].name} • ${g.freq}</span></div></div>
+ <span class="badge">${g.done?"Биелсэн":"Хийгдэж байгаа"}</span></div>`).join(""):"<p class='muted'>Зорилго байхгүй байна. Санал болгосон зорилгоос нэмэх эсвэл өөрөө зохионо уу.</p>";
+}
+
+function addAchievement(){
+ const text=document.getElementById("achievementText").value.trim();if(!text)return;
+ achievements.unshift({id:Date.now(),text,cat:+document.getElementById("achievementCat").value,score:+document.getElementById("achievementScore").value,date:new Date().toLocaleDateString(),cycle:getWeekKey()});
+ saveChildData();document.getElementById("achievementText").value="";renderAchievements();renderCategories();renderGrowth();renderDashboard();toast("Амжилт тэмдэглэгдлээ!");chime("achievement");
+}
+
+function stars(n){return [...Array(5)].map((_,i)=>`<span style="color:${i<n?"var(--gold)":"#d2d8df"}">★</span>`).join("")}
+
+function renderAchievements(){
+ document.getElementById("achievementList").innerHTML=achievements.length?achievements.map(a=>`<div class="achievementRow"><div><b>${a.text}</b><br><span class="small muted">${categories[a.cat].icon} ${categories[a.cat].name} • ${a.date}</span></div><div>${stars(a.score)}</div></div>`).join(""):"<p class='muted'>Одоогоор амжилт бүртгэгдээгүй байна.</p>";
+}
+
+function weeklyPercent(){
+ const currentGoals=goals.filter(g=>g.cycle===getWeekKey()||!g.cycle);
+ const currentAch=achievements.filter(a=>a.cycle===getWeekKey()||!a.cycle);
+ const gp=currentGoals.length?currentGoals.filter(g=>g.done).length/currentGoals.length:0;
+ const ap=currentAch.length?currentAch.reduce((s,a)=>s+a.score,0)/(currentAch.length*5):0;
+ let p=Math.round((gp*.6+ap*.4)*100);
+ if(!currentGoals.length&&!currentAch.length)p=0;
+ return Math.min(100,p);
+}
+
+function renderGrowth(){
+ const p=weeklyPercent();
+ document.getElementById("homePercent").textContent=p+"%";document.getElementById("homeBar").style.width=p+"%";
+ const msg=document.getElementById("completionMessage");
+ if(p>=100){
+   msg.className="completion";msg.innerHTML=`<span class="spark s1">✦</span><span class="spark s2">✧</span><span class="spark s3">✦</span><span class="spark s4">✧</span><h2>🎉 Сайн байна, ${child.name}!</h2><p>Та энэ долоо хоногийн гэр бүлийн өсөлтийн төлөвлөгөөгөө биелүүллээ.</p><button class="primary" onclick="startNewCycle()">Дараагийн долоо хоногийг эхлэх</button>`;
+ }else msg.className="hidden";
+ const growthCount=goals.filter(g=>g.done).length+achievements.length;
+ const stage=growthCount<3?"🌱":growthCount<7?"🌿":growthCount<14?"🌳":"🌳";
+ document.getElementById("treeVisual").textContent=stage;
+ document.getElementById("leaves").textContent="🍃".repeat(Math.min(24,growthCount));
+ document.getElementById("growthText").textContent=growthCount?`${growthCount} өсөлтийн мөч тэмдэглэгдсэн.`:"Таны мод ургахад бэлэн байна.";
+}
+
+function startNewCycle(){
+ cycle=getWeekKey();
+ storage.setItem(`ltCycle_${child.id}`,cycle);
+ goals.forEach(g=>{g.done=false;g.cycle=cycle});
+ achievements=[];
+ saveChildData();render();toast("Шинэ өсөлтийн цикл эхэллээ.");
+}
+
+function renderCategories(){
+ document.getElementById("categories").innerHTML=categories.map((c,i)=>{
+   const aa=achievements.filter(a=>a.cat===i),gd=goals.filter(g=>g.cat===i),done=gd.filter(g=>g.done).length;
+   const p=aa.length?Math.round(aa.reduce((s,a)=>s+a.score,0)/(aa.length*5)*100):gd.length?Math.round(done/gd.length*100):0;
+   return `<div class="card category"><div class="catIcon">${c.icon}</div><div style="flex:1"><div class="catTitle">${c.name}</div><div class="progress"><i style="width:${p}%"></i></div><span class="small muted">${p}% • ${aa.length} амжилт • ${done}/${gd.length} зорилго</span></div></div>`;
+ }).join("");
+}
+
+function renderDashboard(){
+ const p=weeklyPercent(),done=goals.filter(g=>g.done).length,totalGoals=goals.length,ach=achievements.length;
+ document.getElementById("dashboardContent").innerHTML=`<div class="weekBanner"><div class="weekTop"><b>Долоо хоногийн гэр бүлийн өсөлт</b><b class="percent">${p}%</b></div><div class="progress"><i style="width:${p}%"></i></div></div>
+ <div class="grid"><div class="card"><div class="percent">${ach}</div><div class="muted">Амжилтууд</div></div><div class="card"><div class="percent">${done}/${totalGoals}</div><div class="muted">Биелсэн зорилго</div></div><div class="card"><div class="percent">${p}%</div><div class="muted">Одоогийн цикл</div></div></div>
+ <h2>Хөгжлийн чиглэлүүд</h2>${categories.map((c,i)=>{let aa=achievements.filter(a=>a.cat===i),gg=goals.filter(g=>g.cat===i),x=gg.length?Math.round(gg.filter(g=>g.done).length/gg.length*100):0;return `<div style="margin:14px 0"><b>${c.icon} ${c.name}</b><div class="progress"><i style="width:${x}%"></i></div><span class="small muted">Зорилгын ${x}% нь биелсэн</span></div>`}).join("")}`;
+}
+
+function renderFundamentals(){
+ const data=getAgeData(child.age);
+ document.getElementById("fundamentalContent").innerHTML=`<div class="card"><span class="badge">${child.age} НАСТАЙ</span><h2>${data.focus}</h2>${data.goals.map((g,i)=>`<label><input class="check" type="checkbox"> ${g[0]} <span class="small muted">— ${g[1]}</span></label>`).join("")}</div>
+ <div class="recommend"><b>Эцэг эхэд зориулсан зөвлөгөө</b><p class="muted">Эдгээрийг яриа болон дадлага хийх санаа болгон ашиглаарай. Хүүхэд зарим чиглэлд түрүүлж яваа байхад зарим дээр нь хөгжиж байж болно. Хүүхдийн хөгжил, суралцах үйл явц, зан төлөв эсвэл чадварын талаар байнгын санаа зовж буй зүйл байвал мэргэжлийн хүнтэй зөвлөлдөнө үү.</p></div>`;
+}
+
+function show(id,btn){
+ !child?(toast("Эхлэхийн тулд хүүхэд нэмнэ үү."),openAddChildFlow(),void 0):(document.querySelectorAll("section").forEach(s=>s.classList.add("hidden")),document.getElementById(id).classList.remove("hidden"),document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active")),btn&&btn.classList.add("active"),id==="dashboard"&&renderDashboard(),id==="goals"&&renderGoals());
+}
+
+function saveAllChildren(){
+ storage.setItem("ltChildren", JSON.stringify(children));
+ storage.setItem("ltActiveChildId", activeChildId);
+}
+
+function saveChildData(){
+ storage.setItem(`ltGoals_${child.id}`,JSON.stringify(goals));
+ storage.setItem(`ltAchievements_${child.id}`,JSON.stringify(achievements));
+}
+
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200)}
+
+function chime(type){
+ try{
+  const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const c=new A(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type="sine";o.frequency.value=type==="achievement"?660:520;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.07,c.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.22);o.start();o.stop(c.currentTime+.24);
+ }catch(e){}
+}
+</script>
+</body>
+</html>
