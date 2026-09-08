@@ -220,7 +220,7 @@ const storage={
 
 async function initApp() {
   try {
-    const res = await fetch('/data.json');
+    const res = await fetch('/usuhui/data.json');
     const serverData = await res.json();
     categories = serverData.categories;
     ageData = serverData.ageData;
