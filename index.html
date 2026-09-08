@@ -13,25 +13,26 @@
  <div class="card" style="max-width:400px; width:100%; text-align:center;">
   <div class="splashTree">🌳</div>
   <h1>Бяцхан Мод</h1>
-  <p>Утасны дугаар болон нэвтрэх код оруулна уу.</p>
+  <p>Утасны дугаар болон 5 оронтой тусгай код оруулна уу.</p>
   <div style="text-align:left; margin-top:15px;">
    <label>Утасны дугаар (8 оронтой)</label>
    <input id="loginPhone" type="text" maxlength="8" placeholder="99112233">
-   <label>Нэвтрэх код</label>
-   <input id="loginCode" type="password" maxlength="5" placeholder="4 эсвэл 5 оронтой код">
+   <label>Нэвтрэх код (5 оронтой)</label>
+   <input id="loginCode" type="password" maxlength="5" placeholder="Тусгай код">
   </div>
   <br>
   <button class="primary" style="width:100%;" onclick="handleLogin()">Нэвтрэх / Эхлэх</button>
+  <div id="codeHint" class="small muted" style="margin-top:12px; cursor:pointer;" onclick="showGeneratedCodeHint()">Кодоо мэдэхгүй байна уу?</div>
  </div>
 </div>
 
-<!-- ONBOARDING SCREEN: Choose 4 out of 8 Development Goals -->
+<!-- ONBOARDING SCREEN: Choose 4 out of 12 Development Goals -->
 <div id="onboardScreen" class="splash hidden">
- <div class="card" style="max-width:540px; width:100%; text-align:left;">
+ <div class="card" style="max-width:600px; width:100%; text-align:left;">
   <div style="text-align:center;"><span style="font-size:50px;">🎯</span></div>
-  <h2 style="text-align:center; margin-top:5px;">Анхдагч зорилгоо сонгоно уу</h2>
-  <p class="muted" style="text-align:center;">Та хүүхдийнхээ хөгжилд анхаарах <strong>яг 4 чиглэлийг</strong> сонгоно уу.</p>
-  <div id="onboardFocusGrid" class="focusWrap" style="margin:20px 0;"></div>
+  <h2 style="text-align:center; margin-top:5px;">Хөгжлийн зорилгоо сонгоно уу</h2>
+  <p class="muted" style="text-align:center;">Доорх 12 чиглэлээс хүүхдийнхээ хөгжилд анхаарах <strong>яг 4 чиглэлийг</strong> сонгоно уу.</p>
+  <div id="onboardFocusGrid" class="focusWrap" style="margin:20px 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px;"></div>
   <button class="primary" style="width:100%;" onclick="completeOnboarding()">Үргэлжлүүлэх</button>
  </div>
 </div>
@@ -53,7 +54,7 @@
   
   <div class="nav">
    <button class="active" onclick="show('home',this)">Нүүр</button>
-   <button onclick="show('goals',this)">Зрилтууд</button>
+   <button onclick="show('goals',this)">Зорилтууд</button>
    <button onclick="show('achievements',this)">Амжилтууд</button>
    <button onclick="show('dashboard',this)">Хяналтын самбар</button>
    <button onclick="show('fundamentals',this)">Үндсэн суурь</button>
@@ -74,7 +75,7 @@
      <span class="badge" id="ageBadge"></span>
      <h1 id="welcome"></h1>
      <p class="muted">Бяцхан Мод нь хүүхэд өсч томрох тусам санал болгох үйл ажиллагаануудаа автоматаар тохируулдаг.</p>
-     <button class="primary" onclick="show('goals')">Зрилго тодорхойлох</button>
+     <button class="primary" onclick="show('goals')">Зорилго тодорхойлох</button>
      <button class="secondary" onclick="show('achievements')">+ Амжилт бүртгэх</button>
     </div>
     <div class="treePanel">
