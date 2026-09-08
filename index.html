@@ -220,7 +220,7 @@ const storage={
 
 async function initApp() {
   try {
-    const res = await fetch('/api/data');
+    const res = await fetch('/api/json');
     const serverData = await res.json();
     categories = serverData.categories;
     ageData = serverData.ageData;
