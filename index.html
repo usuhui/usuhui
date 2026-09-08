@@ -8,6 +8,7 @@
 </head>
 <body>
 
+<!-- AUTH SCREEN -->
 <div id="authScreen" class="splash">
  <div class="card" style="max-width:400px; width:100%; text-align:center;">
   <div class="splashTree">🌳</div>
@@ -24,6 +25,18 @@
  </div>
 </div>
 
+<!-- ONBOARDING SCREEN: Choose 4 out of 8 Development Goals -->
+<div id="onboardScreen" class="splash hidden">
+ <div class="card" style="max-width:540px; width:100%; text-align:left;">
+  <div style="text-align:center;"><span style="font-size:50px;">🎯</span></div>
+  <h2 style="text-align:center; margin-top:5px;">Анхдагч зорилгоо сонгоно уу</h2>
+  <p class="muted" style="text-align:center;">Та хүүхдийнхээ хөгжилд анхаарах <strong>яг 4 чиглэлийг</strong> сонгоно уу.</p>
+  <div id="onboardFocusGrid" class="focusWrap" style="margin:20px 0;"></div>
+  <button class="primary" style="width:100%;" onclick="completeOnboarding()">Үргэлжлүүлэх</button>
+ </div>
+</div>
+
+<!-- MAIN APP -->
 <div id="app" class="app hidden">
  <div class="screen">
   <div class="topbar">
@@ -37,20 +50,23 @@
     <button class="secondary" style="padding:8px 12px;" onclick="openAddChildFlow()">+ Хүүхэд нэмэх</button>
    </div>
   </div>
+  
   <div class="nav">
    <button class="active" onclick="show('home',this)">Нүүр</button>
    <button onclick="show('goals',this)">Зрилтууд</button>
    <button onclick="show('achievements',this)">Амжилтууд</button>
    <button onclick="show('dashboard',this)">Хяналтын самбар</button>
    <button onclick="show('fundamentals',this)">Үндсэн суурь</button>
-   <button onclick="editChild()">Хүүхдийн профайл</button>
+   <button onclick="show('profile',this)">Хүүхдийн профайл</button>
   </div>
 
   <section id="home">
    <div class="weekBanner">
-    <div class="weekTop"><div><span class="badge">ЭНЭ ДОЛОО ХОНОГТ</span><h2 style="margin:7px 0 0">🌟 Гэр бүлийн өсөлтийн хэмжүүр</h2><span class="muted">Утга учиртай зорилго болон амжилтуудыг хамтдаа бүтээгээрэй.</span></div><div class="percent" id="homePercent">0%</div></div>
+    <div class="weekTop">
+     <div><span class="badge">ЭНЭ ДОЛОО ХОНОГТ</span><h2 style="margin:7px 0 0">🌟 Гэр бүлийн өсөлтийн хэмжүүр</h2><span class="muted">Утга учиртай зорилго болон амжилтуудыг хамтдаа бүтээгээрэй.</span></div>
+     <div class="percent" id="homePercent">0%</div>
+    </div>
     <div class="progress"><i id="homeBar" style="width:0%"></i></div>
-    <div id="completionMessage" class="hidden"></div>
    </div>
 
    <div class="card hero">
@@ -61,7 +77,10 @@
      <button class="primary" onclick="show('goals')">Зрилго тодорхойлох</button>
      <button class="secondary" onclick="show('achievements')">+ Амжилт бүртгэх</button>
     </div>
-    <div class="treePanel"><div class="treeVisual" id="treeVisual">🌱</div><div class="leaves" id="leaves"></div><div class="growthText" id="growthText">Таны мод ургахад бэлэн байна.</div></div>
+    <div class="treePanel">
+     <div class="treeVisual" id="treeVisual">🌱</div>
+     <div class="growthText" id="growthText">Таны мод ургахад бэлэн байна.</div>
+    </div>
    </div>
 
    <div class="card">
@@ -87,7 +106,7 @@
 
   <section id="achievements" class="hidden">
    <div class="card">
-    <h1>🏆 Амжилతాа тэмдэглэх</h1>
+    <h1>🏆 Амжилтаа тэмдэглэх</h1>
     <div class="formGrid">
      <div><label>Юу болсон бэ?</label><input id="achievementText" placeholder="Гэрийн даалгавраа цаг тухайд нь хийж дуусгасан"></div>
      <div><label>Хөгжлийн чиглэл</label><select id="achievementCat"></select></div>
@@ -102,7 +121,7 @@
   </section>
 
   <section id="fundamentals" class="hidden">
-   <div class="card"><h1>🌿 Үндсэн суурь</h1><div id="fundamentalContent"></div></div>
+   <div class="card"><h1>🌿 Үндсэн суурь</h1><div id="fundamentalContent"><p class="muted">Хүүхдийн өсөлт хөгжил, анхаарах ёстой суурь зөвлөмжүүд.</p></div></div>
   </section>
 
   <section id="profile" class="hidden">
@@ -112,17 +131,15 @@
      <div><label>Нэр</label><input id="profileName"></div>
      <div><label>Нас</label><input id="profileAge" type="number" min="2" max="18"></div>
      <div><label>Хүйс / Загвар</label>
-      <div id="genderContainer" class="gender-box">
-       <div class="genderChoices">
-        <button type="button" class="genderBtn" id="profileGenderBoy" onclick="setProfileGender('boy')">Хүү</button>
-        <button type="button" class="genderBtn" id="profileGenderGirl" onclick="setProfileGender('girl')">Охин</button>
-        <button type="button" class="genderBtn" id="profileGenderNeutral" onclick="setProfileGender('neutral')">Ерөнхий</button>
-       </div>
-       <input type="hidden" id="profileGender" value="neutral">
+      <div class="genderChoices">
+       <button type="button" class="genderBtn" id="profileGenderBoy" onclick="setProfileGender('boy')">Хүү</button>
+       <button type="button" class="genderBtn" id="profileGenderGirl" onclick="setProfileGender('girl')">Охин</button>
+       <button type="button" class="genderBtn" id="profileGenderNeutral" onclick="setProfileGender('neutral')">Ерөнхий</button>
       </div>
+      <input type="hidden" id="profileGender" value="neutral">
      </div>
-    </div><br><button class="primary" onclick="saveProfile()">Профайлыг хадгалах</button>
-    <button class="secondary" onclick="openFocusAreaModal(false)">Анхаарал хандуулах чиглэлүүдийг засах</button>
+    </div><br>
+    <button class="primary" onclick="saveProfileChanges()">Профайлыг хадгалах</button>
    </div>
   </section>
  </div>
