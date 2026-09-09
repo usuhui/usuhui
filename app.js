@@ -413,9 +413,18 @@ function show(id, btn){
  if(id === 'profile') renderProfileForm();
 }
 
-function handleExitApp() {
-    // If your app has an explicit save function, call it here (e.g., saveDataToLocalStorage());
-    
+/**
+ * Saves current state, clears active session, and returns to the authentication screen.
+ */
+window.handleExitApp = function() {
+    // Save all current data before leaving
+    if (typeof saveAllChildren === 'function') {
+        saveAllChildren();
+    }
+    if (typeof saveChildData === 'function' && child) {
+        saveChildData();
+    }
+
     // Hide the main app and show the auth screen
     const appEl = document.getElementById('app');
     const authEl = document.getElementById('authScreen');
@@ -423,33 +432,17 @@ function handleExitApp() {
     if (appEl) appEl.classList.add('hidden');
     if (authEl) authEl.classList.remove('hidden');
     
-    // Optional: clear any sensitive active inputs if needed
+    // Clear login fields and active session
+    const phoneInput = document.getElementById('loginPhone');
     const codeInput = document.getElementById('loginCode');
+    if (phoneInput) phoneInput.value = '';
     if (codeInput) codeInput.value = '';
     
-    showToast('Амжилттай хадгалаад гарлаа.');
-}
-
-/**
- * Saves current state and returns to the authentication screen.
- */
-window.handleExitApp = function() {
-    // Call your app's existing save function here if available (e.g., saveAppData())
-    if (typeof saveAppData === 'function') {
-        saveAppData();
-    }
-
-    const appEl = document.getElementById('app');
-    const authEl = document.getElementById('authScreen');
+    currentUserPhone = null;
+    storage.removeItem("ltActiveUserPhone");
     
-    if (appEl) appEl.classList.add('hidden');
-    if (authEl) authEl.classList.remove('hidden');
-    
-    // Clear the password field for security
-    const codeInput = document.getElementById('loginCode');
-    if (codeInput) codeInput.value = '';
-    
-    if (typeof showToast === 'function') {
-        showToast('Амжилттай хадгалаад гарлаа.');
+    // Show confirmation message
+    if (typeof toast === 'function') {
+        toast('Амжилттай хадгалаад гарлаа.');
     }
 };
