@@ -40,17 +40,19 @@
 <!-- MAIN APP -->
 <div id="app" class="app hidden">
  <div class="screen">
-  <div class="topbar">
-   <div class="brand">🌱 Бяцхан <span>Мод</span></div>
-   <div style="display:flex;gap:10px;align-items:center;">
-    <div class="childSwitcher" id="childSwitcherBox">
-     <span>👶</span>
-     <select id="childSelect" onchange="switchChild(this.value)"></select>
-     <span id="noChildLabel" class="emptySwitcher hidden">Хүүхэд бүртгэгдээгүй байна</span>
-    </div>
-    <button class="secondary" style="padding:8px 12px;" onclick="openAddChildFlow()">+ Хүүхэд нэмэх</button>
-   </div>
+<div class="topbar">
+ <div class="brand">🌱 Бяцхан <span>Мод</span></div>
+ <div style="display:flex;gap:10px;align-items:center;">
+  <div class="childSwitcher" id="childSwitcherBox">
+   <span>👶</span>
+   <select id="childSelect" onchange="switchChild(this.value)"></select>
+   <span id="noChildLabel" class="emptySwitcher hidden">Хүүхэд бүртгэгдээгүй байна</span>
   </div>
+  <button class="secondary" style="padding:8px 12px;" onclick="openAddChildFlow()">+ Хүүхэд нэмэх</button>
+  <!-- Add the Exit button here -->
+  <button class="secondary" style="padding:8px 12px; background-color: #fee2e2; color: #991b1b; border-color: #fecaca;" onclick="handleExitApp()">Гарах</button>
+ </div>
+</div>
   
   <div class="nav">
    <button class="active" onclick="show('home',this)">Нүүр</button>
