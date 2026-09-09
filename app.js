@@ -429,3 +429,27 @@ function handleExitApp() {
     
     showToast('Амжилттай хадгалаад гарлаа.');
 }
+
+/**
+ * Saves current state and returns to the authentication screen.
+ */
+window.handleExitApp = function() {
+    // Call your app's existing save function here if available (e.g., saveAppData())
+    if (typeof saveAppData === 'function') {
+        saveAppData();
+    }
+
+    const appEl = document.getElementById('app');
+    const authEl = document.getElementById('authScreen');
+    
+    if (appEl) appEl.classList.add('hidden');
+    if (authEl) authEl.classList.remove('hidden');
+    
+    // Clear the password field for security
+    const codeInput = document.getElementById('loginCode');
+    if (codeInput) codeInput.value = '';
+    
+    if (typeof showToast === 'function') {
+        showToast('Амжилттай хадгалаад гарлаа.');
+    }
+};
