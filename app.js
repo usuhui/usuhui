@@ -412,3 +412,20 @@ function show(id, btn){
  if(btn) btn.classList.add("active");
  if(id === 'profile') renderProfileForm();
 }
+
+function handleExitApp() {
+    // If your app has an explicit save function, call it here (e.g., saveDataToLocalStorage());
+    
+    // Hide the main app and show the auth screen
+    const appEl = document.getElementById('app');
+    const authEl = document.getElementById('authScreen');
+    
+    if (appEl) appEl.classList.add('hidden');
+    if (authEl) authEl.classList.remove('hidden');
+    
+    // Optional: clear any sensitive active inputs if needed
+    const codeInput = document.getElementById('loginCode');
+    if (codeInput) codeInput.value = '';
+    
+    showToast('Амжилттай хадгалаад гарлаа.');
+}
